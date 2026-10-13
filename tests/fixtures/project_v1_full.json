@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "language": "python",
+  "code": "from machine import Pin\nled = Pin(15, Pin.OUT)\nled.on()\n",
+  "board": "pico_w",
+  "components": [
+    {
+      "id": "led_1700000000001",
+      "type": "led",
+      "x": 120,
+      "y": 340,
+      "rotation": 90,
+      "color": "#3b82f6",
+      "flipped": true
+    },
+    {
+      "id": "res_1700000000002",
+      "type": "resistor",
+      "x": 60,
+      "y": 300,
+      "rotation": 0,
+      "value": 4.7,
+      "unit": 1000
+    },
+    {
+      "id": "btn_1700000000003",
+      "type": "button",
+      "x": 100,
+      "y": 600,
+      "rotation": 180
+    }
+  ],
+  "connections": [
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 20,
+        "gpNum": "15",
+        "x": 410,
+        "y": 52
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_1700000000002"
+      },
+      "color": "#15803d"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_1700000000002"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_1700000000001"
+      },
+      "color": "#ef4444"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3,
+        "x": 410,
+        "y": 80
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_1700000000001"
+      },
+      "color": "#15803d"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 1,
+        "x": 100,
+        "y": 52
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "btn_1700000000003"
+      },
+      "color": "#22c55e"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3,
+        "x": 100,
+        "y": 80
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "3",
+        "componentId": "btn_1700000000003"
+      },
+      "color": "#15803d"
+    }
+  ]
+}

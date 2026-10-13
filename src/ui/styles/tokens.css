@@ -1,0 +1,168 @@
+/*
+ * Design tokens: the only place colours, type, spacing, radii, layers and motion are defined.
+ * Everything else reads these custom properties, so a theme is a set of values, never a second stylesheet.
+ * tests/unit/ui/design-tokens.test.js checks the contrast of the pairs that matter, in BOTH themes.
+ *
+ * Themes: <html data-theme="dark|light"> is set before first paint by public/theme-init.js (the viewer's choice, or the
+ * operating system's preference). The circuit artwork (green board, parts, wire colours) is never recoloured: only the
+ * surroundings change. Copper is Voltloom's single interaction accent in both themes: selection, focus, active tab.
+ */
+@layer tokens {
+  /* â”€â”€ Shared: type, spacing, shape, layers, motion, layout â”€â”€ */
+  :root {
+    --font-ui: "IBM Plex Sans", system-ui, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+    --fs-meta: 12px;            /* secondary information only */
+    --fs-ui: 13px;              /* labels, buttons, tabs, console, inspector */
+    --fs-body: 14px;            /* dialog and empty-state copy */
+    --fs-title: 16px;
+    --lh-ui: 1.4;
+
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 24px;
+
+    --r-sm: 4px;
+    --r-md: 6px;
+    --r-lg: 10px;
+    --ctl-h: 30px;              /* buttons and fields in toolbars */
+    --hit: 30px;                /* square icon buttons */
+    --row-h: 40px;              /* every header row: title bar is taller, pane headers share this */
+    --foot-h: 30px;             /* every footer row: editor status bar and the collapsed console line up */
+
+    /* Stacking order (one scale; nothing uses an ad-hoc number) */
+    --z-canvas-ui: 10;          /* hint line, stats card */
+    --z-panel: 20;              /* toolbars, docked panels */
+    --z-card: 25;               /* properties card */
+    --z-menu: 40;
+    --z-popover: 50;
+    --z-tooltip: 60;
+
+    --t-fast: 150ms;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Pin states. They are drawn ON the board, whose green never changes with the theme, so they are the same in
+       both themes and are chosen against the board (#006837) and its pads (#958863). */
+    --pin-rim: rgb(255 255 255 / 0.42);      /* hairline around every connectable pad, so pads read against the PCB */
+    --pin-hot: #fff2d1;                      /* pointer over a pin */
+    --pin-hot-ring: #e08a3c;
+    --pin-source: #f0aa76;                   /* the pin a wire is being drawn from */
+    --pin-valid: #d3f8e2;                    /* a pin the wire may end on */
+    --pin-valid-ring: #1f9d63;
+    --pin-invalid: #ffd2d0;                  /* a pin it may not (polarity) */
+    --pin-invalid-ring: #d6403d;
+
+    --titlebar-h: 44px;
+    --code-w: 42%;
+    --console-h: 192px;
+    --inspector-w: 272px;
+  }
+
+  /* â”€â”€ Dark (default): warm graphite â”€â”€ */
+  :root, :root[data-theme="dark"] {
+    color-scheme: dark;
+
+    --bg: #101113;
+    --surface-1: #16181b;       /* panes, title bar, headers */
+    --surface-2: #1d2024;       /* controls, cards, menus */
+    --surface-3: #272b31;       /* hover, pressed */
+    --canvas: #14161a;          /* the canvas and the editor are one work surface */
+    --canvas-dot: #2e3238;      /* the optional grid only */
+    --editor: #14161a;
+
+    --border: #2b2f35;          /* hairlines between regions */
+    --border-strong: #41464f;   /* outlines of bordered buttons and cards (decorative: they also have a fill and a label) */
+    --field-border: #6f7683;    /* the edge of inputs and selects, the only thing that shows where they are: 3:1 */
+
+    --text: #e9e7e4;
+    --text-2: #b4b1ac;
+    --text-3: #98958f;
+
+    --accent: #d98a4e;
+    --accent-strong: #f0aa76;   /* focus ring, selection ring, accent text */
+    --accent-ink: #1b1008;      /* text on a copper fill */
+    --accent-soft: rgb(217 138 78 / 0.16);
+
+    --run: #3dc88a;
+    --run-hover: #59d79d;
+    --run-ink: #06140d;
+    --stop: #ef6461;
+    --stop-hover: #f48481;
+    --stop-ink: #1c0707;
+    --warn: #e6c14a;
+    --info: #6ab0e8;
+    --ok: #3dc88a;
+
+    --warn-soft: rgb(230 193 74 / 0.14);
+    --stop-soft: rgb(239 100 97 / 0.14);
+    --ok-soft: rgb(61 200 138 / 0.14);
+    --info-soft: rgb(106 176 232 / 0.14);
+
+    --overlay-bg: rgb(22 24 27 / 0.94);     /* hint line and stats card over the canvas */
+    --tip-bg: #2f343b;                      /* tooltips and part labels */
+    --tip-text: #f1efec;
+    --backdrop: rgb(8 9 10 / 0.68);
+    --shadow-float: 0 10px 28px rgb(0 0 0 / 0.5), 0 0 0 1px var(--border-strong);
+    --part-shadow: drop-shadow(0 0 0.6px rgb(0 0 0 / 0.7)) drop-shadow(0 2px 3px rgb(0 0 0 / 0.5));
+    --wire-casing: #000000;     /* thin outline around every wire: keeps it apart from the board and from other wires */
+    --wire-joint: #f1efec;      /* the dot where a wire meets a pin */
+  }
+
+  /* â”€â”€ Light: warm paper, never pure white â”€â”€ */
+  :root[data-theme="light"] {
+    color-scheme: light;
+
+    --bg: #e9e7e2;
+    --surface-1: #f6f5f2;
+    --surface-2: #fcfbf9;
+    --surface-3: #e8e5df;
+    --canvas: #dcdad5;          /* a soft mid-light grey, so white leads, light pins and the green board all stand out */
+    --canvas-dot: #ffffff;      /* the optional grid: white dots read on the grey canvas without shouting */
+    --editor: #f8f7f4;
+
+    --border: #dcd8d1;
+    --border-strong: #c3beb4;
+    --field-border: #7d776d;
+
+    --text: #1d1c1a;
+    --text-2: #4b4842;
+    --text-3: #5f5b54;
+
+    --accent: #a85a22;
+    --accent-strong: #944c18;
+    --accent-ink: #ffffff;
+    --accent-soft: rgb(168 90 34 / 0.12);
+
+    --run: #12703f;
+    --run-hover: #0e5f35;
+    --run-ink: #ffffff;
+    --stop: #b42c2a;
+    --stop-hover: #9a2321;
+    --stop-ink: #ffffff;
+    --warn: #7c5500;
+    --info: #1f62a3;
+    --ok: #12703f;
+
+    --warn-soft: rgb(124 85 0 / 0.1);
+    --stop-soft: rgb(180 44 42 / 0.09);
+    --ok-soft: rgb(18 112 63 / 0.1);
+    --info-soft: rgb(31 98 163 / 0.1);
+
+    --overlay-bg: rgb(252 251 249 / 0.95);
+    --tip-bg: #2a2825;
+    --tip-text: #f4f2ee;
+    --backdrop: rgb(40 36 30 / 0.36);
+    --shadow-float: 0 10px 28px rgb(50 40 25 / 0.16), 0 0 0 1px var(--border-strong);
+    /* the parts were drawn for a dark background (white resistor leads, light grey legs): a hairline outline
+       keeps their shape and pins readable on a light canvas without recolouring them */
+    --part-shadow: drop-shadow(0 0 0.6px rgb(30 25 18 / 0.85)) drop-shadow(0 1px 2px rgb(40 30 15 / 0.22));
+    --wire-casing: #000000;     /* a hairline: black is the only outline that still separates a wire from the dark PCB */
+    --wire-joint: #ffffff;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root { --t-fast: 0ms; }
+  }
+}

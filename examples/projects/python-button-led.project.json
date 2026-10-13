@@ -1,0 +1,104 @@
+{
+  "version": 2,
+  "language": "python",
+  "code": "from machine import Pin\nfrom time import sleep_ms\n\nled = Pin(15, Pin.OUT)\nbutton = Pin(0, Pin.IN, Pin.PULL_UP)   # wired to GND: reads 0 while the button is pressed\n\nwhile True:\n    led.value(0 if button.value() else 1)\n    sleep_ms(10)\n",
+  "board": "pico_w",
+  "components": [
+    {
+      "id": "res_1",
+      "type": "resistor",
+      "x": 50,
+      "y": 300,
+      "rotation": 0,
+      "value": 330,
+      "unit": 1
+    },
+    {
+      "id": "led_1",
+      "type": "led",
+      "x": 300,
+      "y": 300,
+      "rotation": 0,
+      "color": "#ef4444",
+      "flipped": false
+    },
+    {
+      "id": "btn_1",
+      "type": "button",
+      "x": 100,
+      "y": 600,
+      "rotation": 0
+    }
+  ],
+  "connections": [
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 20
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_1"
+      },
+      "color": "#15803d",
+      "id": "wire_1"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_1"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_2"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_3"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 1
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "btn_1"
+      },
+      "color": "#15803d",
+      "id": "wire_4"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "3",
+        "componentId": "btn_1"
+      },
+      "color": "#15803d",
+      "id": "wire_5"
+    }
+  ],
+  "meta": {
+    "app": "voltloom"
+  }
+}

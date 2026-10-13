@@ -1,0 +1,104 @@
+{
+  "version": 2,
+  "language": "c",
+  "code": "#include <stdio.h>\n#include \"pico/stdlib.h\"\n#include \"hardware/gpio.h\"\n\n#define LED_PIN 15\n#define BUTTON_PIN 0\n\nstatic volatile int presses = 0;\n\nvoid on_button(uint gpio, uint32_t events) {\n    presses++;\n    gpio_put(LED_PIN, !gpio_get_out_level(LED_PIN));\n    printf(\"press %d\\n\", presses);\n}\n\nint main() {\n    stdio_init_all();\n\n    gpio_init(LED_PIN);\n    gpio_set_dir(LED_PIN, GPIO_OUT);\n\n    gpio_init(BUTTON_PIN);\n    gpio_set_dir(BUTTON_PIN, GPIO_IN);\n    gpio_pull_up(BUTTON_PIN);        // the button connects the pin to GND\n\n    gpio_set_irq_enabled_with_callback(BUTTON_PIN, GPIO_IRQ_EDGE_FALL, true, &on_button);\n\n    while (true) {\n        sleep_ms(100);\n    }\n}\n",
+  "board": "pico_w",
+  "components": [
+    {
+      "id": "res_1",
+      "type": "resistor",
+      "x": 50,
+      "y": 300,
+      "rotation": 0,
+      "value": 330,
+      "unit": 1
+    },
+    {
+      "id": "led_1",
+      "type": "led",
+      "x": 300,
+      "y": 300,
+      "rotation": 0,
+      "color": "#ef4444",
+      "flipped": false
+    },
+    {
+      "id": "btn_1",
+      "type": "button",
+      "x": 100,
+      "y": 600,
+      "rotation": 0
+    }
+  ],
+  "connections": [
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 20
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_1"
+      },
+      "color": "#15803d",
+      "id": "wire_1"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_1"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_2"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_3"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 1
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "btn_1"
+      },
+      "color": "#15803d",
+      "id": "wire_4"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "3",
+        "componentId": "btn_1"
+      },
+      "color": "#15803d",
+      "id": "wire_5"
+    }
+  ],
+  "meta": {
+    "app": "voltloom"
+  }
+}

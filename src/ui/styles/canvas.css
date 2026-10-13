@@ -1,0 +1,164 @@
+/* The circuit canvas: grid, parts, wires, the floating properties card, notices, the hint line, the stats card. */
+@layer canvas {
+
+  #simulation-area {
+    --zoom: 1;
+    --inv-zoom: 1;
+    --grid: 24px;
+    --gx: 0px;
+    --gy: 0px;
+    position: relative; flex: 1; min-height: 160px; overflow: hidden;
+    background-color: var(--canvas);              /* plain: the circuit is the only thing to look at */
+    cursor: grab;
+    touch-action: none;
+  }
+  /* Optional placement grid (toolbar toggle, off by default): faint dots that follow pan and zoom */
+  #simulation-area.show-grid {
+    background-image: radial-gradient(circle, var(--canvas-dot) 1px, transparent 1.5px);
+    background-size: var(--grid) var(--grid);
+    background-position: var(--gx) var(--gy);
+  }
+  #simulation-area.is-panning { cursor: grabbing; }
+  #simulation-area.is-wiring { cursor: crosshair; }
+  /* While a wire is being drawn, existing wires never get in the way of the pin it should end on */
+  #simulation-area.is-wiring #wire-layer path { pointer-events: none; }
+
+  /* Everything drawn on the canvas lives in this one element; geometry.js explains the maths. */
+  #board-container { position: absolute; left: 0; top: 0; transform-origin: 0 0; cursor: default; }
+
+  .canvas-state { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; background: var(--canvas); }
+
+  /* ───────── Parts ───────── */
+  .part { position: absolute; z-index: 50; cursor: move; user-select: none; }
+  .part > svg { filter: var(--part-shadow); }             /* an LED that is on replaces this inline */
+
+  .part.is-selected::after {
+    content: ""; position: absolute; inset: -8px; pointer-events: none;
+    border: 2px solid var(--accent-strong); border-radius: 8px;
+  }
+
+  .part-label {
+    position: absolute; left: 50%; top: -10px; z-index: 60;
+    /* undo the part's flip and turn, and its zoom, so the label stays upright and the same size on screen */
+    transform: translate(-50%, -100%) scaleX(var(--flip, 1)) rotate(calc(-1 * var(--rot, 0deg))) scale(var(--inv-zoom));
+    transform-origin: 50% 100%;
+    padding: 3px 8px;
+    background: var(--tip-bg); color: var(--tip-text);
+    border-radius: var(--r-md);
+    font: 500 13px/1.3 var(--font-ui); white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--t-fast) var(--ease);
+  }
+  .part:hover .part-label, .part.is-selected .part-label { opacity: 1; }
+
+  /* ───────── Wires ─────────
+     Each wire keeps its own colour; a thin outline (casing) separates it from the board and from crossing wires, and a
+     dot marks exactly where it meets a pin. Filters and markers are defined in the wire layer (wire-view.js). */
+  #wire-layer .wire { filter: none; }                          /* thin and plain, like Wokwi */
+  #wire-layer .wire.is-selected { filter: url(#wire-casing-selected); }
+  #wire-layer .wire--temp { stroke-dasharray: 10 8; opacity: 0.95; }
+  #wire-layer .wire-casing-color { flood-color: var(--wire-casing); }
+  #wire-layer .wire-casing-selected-color { flood-color: var(--accent-strong); }
+  /* Route handles of the selected wire: round = a bend (drag anywhere), square = a segment (drag across) */
+  #wire-handles .wire-handle {
+    pointer-events: all;
+    fill: var(--surface-2); stroke: var(--accent-strong);
+    stroke-width: 1.6px; vector-effect: non-scaling-stroke;
+    transition: fill var(--t-fast) var(--ease);
+  }
+  #wire-handles .wire-handle--bend { cursor: move; }
+  #wire-handles .wire-handle--segment { fill: var(--accent-strong); stroke: var(--surface-2); }
+  #wire-handles .wire-handle--h { cursor: ns-resize; }
+  #wire-handles .wire-handle--v { cursor: ew-resize; }
+  #wire-handles .wire-handle:hover { fill: var(--accent); }
+  #simulation-area.is-editing-wire, #simulation-area.is-editing-wire * { cursor: grabbing !important; }
+
+  #wire-layer .wire-joint { fill: var(--wire-joint); stroke: var(--wire-casing); stroke-width: 1.2px; }
+
+  /* ───────── Pins ─────────
+     Board pads: a hairline rim makes every connectable pad stand out from the PCB without recolouring it. States
+     (hover, the pin a wire starts from, a pin it may or may not end on) fill the pad; their colours are chosen against
+     the green board, which looks the same in both themes. */
+  #board-container [data-is-port] { stroke: var(--pin-rim); stroke-width: 0.8px; paint-order: stroke; transition: fill var(--t-fast) var(--ease); }
+  #board-container [data-is-port].pin--hot { fill: var(--pin-hot); stroke: var(--pin-hot-ring); stroke-width: 1.6px; }
+  #board-container [data-is-port].pin--source { fill: var(--pin-source); stroke: #ffffff; stroke-width: 1.6px; }
+  #board-container [data-is-port].pin--valid { fill: var(--pin-valid); stroke: var(--pin-valid-ring); stroke-width: 2px; }
+  #board-container [data-is-port].pin--invalid { fill: var(--pin-invalid); stroke: var(--pin-invalid-ring); stroke-width: 2px; cursor: not-allowed; }
+
+  /* Part pins: the legs and terminals are the hit areas; the same states, drawn as a stroke or a tint */
+  .part [data-pin] { cursor: crosshair; transition: stroke var(--t-fast) var(--ease), fill var(--t-fast) var(--ease); }
+  .part path[data-pin].pin--hot { stroke: var(--accent-strong); }
+  .part path[data-pin].pin--source { stroke: var(--pin-source); }
+  .part path[data-pin].pin--valid { stroke: var(--pin-valid-ring); }
+  .part path[data-pin].pin--invalid { stroke: var(--pin-invalid-ring); cursor: not-allowed; }
+  .part rect[data-pin].pin--hot { fill: rgb(240 170 118 / 0.5); }
+  .part rect[data-pin].pin--source { fill: rgb(240 170 118 / 0.75); }
+  .part rect[data-pin].pin--valid { fill: rgb(31 157 99 / 0.55); }
+  .part rect[data-pin].pin--invalid { fill: rgb(214 64 61 / 0.55); cursor: not-allowed; }
+
+  /* ───────── Floating properties card ───────── */
+  .props {
+    position: absolute; z-index: var(--z-card); left: 0; top: 0;
+    width: 236px; padding: 6px var(--s-3) var(--s-3);
+    display: flex; flex-direction: column; gap: var(--s-2);
+    background: var(--surface-2); border-radius: var(--r-lg); box-shadow: var(--shadow-float);
+    cursor: default;
+  }
+  .props__head { display: flex; align-items: center; gap: 2px; min-height: var(--hit); }
+  .props__title { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .props__readout {
+    padding: 5px var(--s-2); border-radius: var(--r-md); background: var(--surface-1);
+    font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text); font-variant-numeric: tabular-nums;
+  }
+  .props__row { display: flex; align-items: center; gap: var(--s-2); }
+  .props__row .field { flex: 1; min-width: 0; }
+  .props__row .field[type="number"] { width: 88px; flex: none; }
+  .props__label { color: var(--text-3); font-size: var(--fs-meta); margin-bottom: 4px; }
+  .swatches { display: flex; flex-wrap: wrap; gap: var(--s-2); padding: 2px; }
+
+  /* ───────── Notice: "Restored your last session" (top of the canvas, never blocks it) ───────── */
+  .canvas-notice {
+    position: absolute; top: var(--s-3); left: 50%; transform: translateX(-50%); z-index: var(--z-canvas-ui);
+    max-width: calc(100% - 2 * var(--s-3));
+    display: flex; align-items: center; gap: var(--s-2);
+    padding: 4px 4px 4px var(--s-3);
+    background: var(--surface-2); color: var(--text);
+    border-radius: var(--r-lg); box-shadow: var(--shadow-float);
+  }
+  .canvas-notice .icon { color: var(--accent-strong); }
+  .canvas-notice__text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .canvas-notice__text small { color: var(--text-3); font-size: var(--fs-meta); margin-left: 6px; }
+  .canvas-notice .btn { height: 26px; }
+
+  /* ───────── Hint line ───────── */
+  .canvas-hint {
+    position: absolute; left: var(--s-3); bottom: var(--s-3); z-index: var(--z-canvas-ui);
+    max-width: calc(100% - 2 * var(--s-3));
+    display: flex; flex-wrap: wrap; align-items: center; gap: 4px var(--s-2);
+    padding: 5px 10px;
+    background: var(--overlay-bg); color: var(--text-2);
+    border: 1px solid var(--border); border-radius: var(--r-md);
+    pointer-events: none;
+  }
+  .canvas-hint:empty { display: none; }
+  .canvas-hint .icon { color: var(--text-3); }
+  .canvas-hint[data-tone="active"] { border-color: var(--accent); color: var(--text); }
+  .canvas-hint[data-tone="active"] .icon { color: var(--accent-strong); }
+  .canvas-hint[data-tone="error"] { border-color: var(--stop); color: var(--text); }
+  .canvas-hint[data-tone="error"] .icon { color: var(--stop); }
+
+  /* ───────── Stats card ───────── */
+  .stats {
+    position: absolute; top: var(--s-3); right: var(--s-3); z-index: var(--z-canvas-ui); width: 220px;
+    background: var(--overlay-bg); border: 1px solid var(--border); border-radius: var(--r-md);
+    pointer-events: none; padding: var(--s-2) var(--s-3);
+    font-size: var(--fs-ui);
+  }
+  .stats__title { color: var(--text-3); font-size: var(--fs-meta); font-weight: 600; margin-bottom: var(--s-1); }
+  .stats__row { display: flex; justify-content: space-between; gap: var(--s-3); padding: 1px 0; }
+  .stats__row span:first-child { color: var(--text-2); }
+  .stats__row span:last-child { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+  [data-level="good"] { color: var(--ok); }
+  [data-level="fair"] { color: var(--warn); }
+  [data-level="poor"] { color: var(--stop); }
+}

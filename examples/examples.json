@@ -1,0 +1,98 @@
+{
+  "examples": [
+    {
+      "id": "python-blink",
+      "language": "python",
+      "file": "python/blink.py",
+      "circuit": "led",
+      "untilMs": 2200,
+      "summary": "toggles GP15 every 0.5 s",
+      "expect": {"ended":"limit","boots":1,"stdout":[],"ledLevels":[1,0,1,0,1],"ledLitAtEnd":true}
+    },
+    {
+      "id": "python-button-led",
+      "language": "python",
+      "file": "python/button-led.py",
+      "circuit": "led-button",
+      "untilMs": 3000,
+      "script": [{"atMs":1000,"button":"btn_1","pressed":true},{"atMs":2000,"button":"btn_1","pressed":false}],
+      "summary": "the LED follows the button (polling)",
+      "expect": {"ended":"limit","boots":1,"stdout":[],"ledLevels":[0,1,0],"ledLitAtEnd":false}
+    },
+    {
+      "id": "python-button-irq",
+      "language": "python",
+      "file": "python/button-irq.py",
+      "circuit": "led-button",
+      "untilMs": 3000,
+      "script": [{"atMs":1000,"button":"btn_1","pressed":true},{"atMs":1500,"button":"btn_1","pressed":false},{"atMs":2000,"button":"btn_1","pressed":true},{"atMs":2500,"button":"btn_1","pressed":false}],
+      "summary": "each press toggles the LED from an interrupt handler",
+      "expect": {"ended":"limit","boots":1,"stdout":["press 1","press 2"],"ledLevels":[1,0],"ledLitAtEnd":false}
+    },
+    {
+      "id": "python-pwm-fade",
+      "language": "python",
+      "file": "python/pwm-fade.py",
+      "circuit": "led",
+      "untilMs": 3000,
+      "summary": "ramps the PWM duty cycle on GP15",
+      "expect": {"ended":"exit","boots":1,"stdout":["duty 0","duty 8192","duty 16384","duty 24576","duty 32768","duty 40960","duty 49152","duty 57344","duty 65535","done"],"ledLevels":[],"ledLitAtEnd":true}
+    },
+    {
+      "id": "python-watchdog-reset",
+      "language": "python",
+      "file": "python/watchdog-reset.py",
+      "circuit": "led",
+      "untilMs": 4000,
+      "followResets": true,
+      "summary": "stops feeding the watchdog; the board resets and reports why",
+      "expect": {"ended":"limit","boots":2,"stdout":["power-on start","fed 0","fed 1","fed 2","no more feeding","restarted by the watchdog"],"ledLevels":[1,0],"ledLitAtEnd":false}
+    },
+    {
+      "id": "python-serial-hello",
+      "language": "python",
+      "file": "python/serial-hello.py",
+      "circuit": "led",
+      "untilMs": 6000,
+      "summary": "prints five lines, one per second, then exits",
+      "expect": {"ended":"exit","boots":1,"stdout":["hello 1","hello 2","hello 3","hello 4","hello 5","done"],"ledLevels":[],"ledLitAtEnd":false}
+    },
+    {
+      "id": "c-blink",
+      "language": "c",
+      "file": "c/blink.c",
+      "circuit": "led",
+      "untilMs": 2200,
+      "summary": "the C blink program",
+      "expect": {"ended":"limit","boots":1,"stdout":["=== Voltloom — C Blink Test ===","[0] LED ON","[0] LED OFF","[1] LED ON","[1] LED OFF","[2] LED ON"],"ledLevels":[1,0,1,0,1],"ledLitAtEnd":true}
+    },
+    {
+      "id": "c-button-irq",
+      "language": "c",
+      "file": "c/button-irq.c",
+      "circuit": "led-button",
+      "untilMs": 3000,
+      "script": [{"atMs":1000,"button":"btn_1","pressed":true},{"atMs":1500,"button":"btn_1","pressed":false},{"atMs":2000,"button":"btn_1","pressed":true},{"atMs":2500,"button":"btn_1","pressed":false}],
+      "summary": "each press toggles the LED from a GPIO interrupt callback",
+      "expect": {"ended":"limit","boots":1,"stdout":["press 1","press 2"],"ledLevels":[1,0],"ledLitAtEnd":false}
+    },
+    {
+      "id": "c-pwm-fade",
+      "language": "c",
+      "file": "c/pwm-fade.c",
+      "circuit": "led",
+      "untilMs": 3000,
+      "summary": "ramps a PWM channel on GP15",
+      "expect": {"ended":"exit","boots":1,"stdout":["level 0","level 125","level 250","level 375","level 500","level 625","level 750","level 875","level 999","done"],"ledLevels":[],"ledLitAtEnd":true}
+    },
+    {
+      "id": "python-traffic-light",
+      "language": "python",
+      "file": "python/traffic-light.py",
+      "circuit": "traffic-light",
+      "untilMs": 5500,
+      "summary": "a traffic light: red, red + yellow, green, yellow on GP22, GP19 and GP16",
+      "expect": {"ended":"limit","boots":1,"stdout":["Light: red","Light: red + yellow","Light: green","Light: yellow"],"ledLevels":[],"ledLitAtEnd":false}
+    }
+  ]
+}

@@ -1,0 +1,231 @@
+/* Reusable controls. Nothing here knows about the circuit, the editor or the console.
+   Hover changes colour only (never size), so nothing around a control moves. */
+@layer components {
+
+  /* ───────── Icons (16px grid, one stroke weight) ───────── */
+  .icon {
+    width: 16px; height: 16px; flex: none;
+    fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .icon--sm { width: 14px; height: 14px; }
+  .icon--lg { width: 18px; height: 18px; }
+  .icon--fill { fill: currentColor; stroke-width: 1.2; }
+
+  /* ───────── Buttons ───────── */
+  .btn, .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    height: var(--ctl-h);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: var(--fs-ui);
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    user-select: none;
+    cursor: pointer;
+    transition: background-color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  }
+  .btn { padding: 0 var(--s-3); }
+  .icon-btn { width: var(--hit); padding: 0; flex: none; }
+
+  .btn:hover:not(:disabled), .icon-btn:hover:not(:disabled) { background: var(--surface-3); }
+  .btn:active:not(:disabled), .icon-btn:active:not(:disabled) { background: var(--border); }
+  .btn:disabled, .icon-btn:disabled { opacity: 0.42; cursor: not-allowed; }
+
+  /* Ghost: toolbars. No outline until hovered, so a row of tools reads as one strip, not a row of boxes. */
+  .btn--ghost, .icon-btn--ghost { background: transparent; border-color: transparent; color: var(--text-2); }
+  .btn--ghost:hover:not(:disabled), .icon-btn--ghost:hover:not(:disabled) { background: var(--surface-3); color: var(--text); }
+
+  .btn--run { background: var(--run); border-color: var(--run); color: var(--run-ink); font-weight: 600; }
+  .btn--run:hover:not(:disabled) { background: var(--run-hover); border-color: var(--run-hover); }
+  .btn--run:active:not(:disabled) { background: var(--run); }
+
+  .btn--stop { background: transparent; color: var(--stop); border-color: color-mix(in srgb, var(--stop) 45%, transparent); }
+  .btn--stop:hover:not(:disabled) { background: var(--stop-soft); }
+  .btn--stop.is-live:not(:disabled) { background: var(--stop); border-color: var(--stop); color: var(--stop-ink); font-weight: 600; }
+  .btn--stop.is-live:hover:not(:disabled) { background: var(--stop-hover); border-color: var(--stop-hover); }
+
+  .icon-btn[aria-pressed="true"], .btn[aria-pressed="true"] {
+    background: var(--accent-soft);
+    border-color: transparent;
+    color: var(--accent-strong);
+  }
+  .icon-btn[aria-expanded="true"], .btn[aria-expanded="true"] { background: var(--surface-3); color: var(--text); }
+
+  .icon-btn--danger:hover:not(:disabled) { color: var(--stop); background: var(--stop-soft); }
+
+  /* ───────── Segmented control ───────── */
+  .segmented {
+    display: inline-flex; padding: 2px; gap: 2px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+  }
+  .segmented > button {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 26px; padding: 0 var(--s-3);
+    border-radius: var(--r-sm);
+    color: var(--text-2); font-weight: 500;
+    transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+  }
+  .segmented > button:hover { color: var(--text); }
+  .segmented > button[aria-pressed="true"] {
+    background: var(--surface-2); color: var(--text); box-shadow: 0 0 0 1px var(--border-strong);
+  }
+
+  /* ───────── Pills (status chips) ───────── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 24px; padding: 0 var(--s-2);
+    border: 1px solid var(--border-strong); border-radius: 12px;
+    background: var(--surface-2); color: var(--text-2);
+    font-size: var(--fs-meta); font-weight: 500; line-height: 1; white-space: nowrap;
+  }
+  .pill .icon { width: 14px; height: 14px; }
+  .pill--warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); background: var(--warn-soft); }
+  .pill--error { color: var(--stop); border-color: color-mix(in srgb, var(--stop) 45%, transparent); background: var(--stop-soft); }
+  .pill--ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); background: var(--ok-soft); }
+  .pill--info { color: var(--info); border-color: color-mix(in srgb, var(--info) 40%, transparent); background: var(--info-soft); }
+  button.pill { cursor: pointer; transition: border-color var(--t-fast) var(--ease); }
+  button.pill:hover { border-color: currentColor; }
+
+  /* ───────── Tabs ───────── */
+  .tabs { display: flex; align-items: stretch; height: var(--row-h); background: var(--surface-1); border-bottom: 1px solid var(--border); flex: none; }
+  .tab {
+    position: relative;
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    padding: 0 var(--s-4);
+    color: var(--text-2); font-weight: 500; font-size: var(--fs-ui);
+    cursor: pointer;
+    transition: color var(--t-fast) var(--ease), background-color var(--t-fast) var(--ease);
+  }
+  .tab:hover { color: var(--text); background: var(--surface-2); }
+  .tab[aria-selected="true"] { color: var(--text); background: var(--editor); }
+  .tab[aria-selected="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); }
+  .tab .icon { color: var(--text-3); }
+  .tab[aria-selected="true"] .icon { color: var(--accent-strong); }
+  .tab:focus-visible { outline-offset: -3px; }
+
+  /* ───────── Menu ───────── */
+  .menu {
+    position: absolute; z-index: var(--z-menu);
+    min-width: 248px; padding: var(--s-1);
+    background: var(--surface-2); border-radius: var(--r-lg);
+    box-shadow: var(--shadow-float);
+    display: none; flex-direction: column;
+  }
+  .menu.is-open { display: flex; }
+  .menu-item {
+    display: flex; align-items: center; gap: var(--s-3);
+    padding: 6px var(--s-2); min-height: 44px;
+    border-radius: var(--r-md); color: var(--text);
+    cursor: pointer;
+    transition: background-color var(--t-fast) var(--ease);
+  }
+  .menu-item:hover, .menu-item:focus-visible { background: var(--surface-3); }
+  .menu-item:focus-visible { outline-offset: -2px; }
+  .menu-item__thumb { width: 44px; height: 32px; flex: none; display: grid; place-items: center; background: var(--canvas); border-radius: var(--r-sm); }
+  .menu-item__thumb svg { max-width: 36px; max-height: 26px; }
+  .menu-item__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .menu-item__title { font-weight: 600; }
+  .menu-item__desc { color: var(--text-3); font-size: var(--fs-meta); }
+  .menu-item--compact { min-height: 34px; gap: var(--s-2); }
+  .menu-item[aria-checked="true"] { color: var(--accent-strong); }
+  .menu-item__check { margin-left: auto; visibility: hidden; }
+  .menu-item[aria-checked="true"] .menu-item__check { visibility: visible; }
+  .menu__label { padding: 6px var(--s-2) 4px; color: var(--text-3); font-size: var(--fs-meta); font-weight: 600; }
+
+  /* ───────── Popover ───────── */
+  .popover {
+    position: fixed; z-index: var(--z-popover);
+    max-width: min(360px, calc(100vw - 16px)); padding: var(--s-3);
+    background: var(--surface-2); border-radius: var(--r-lg); box-shadow: var(--shadow-float);
+    font-size: var(--fs-ui);
+  }
+  .popover__title { font-weight: 600; margin-bottom: var(--s-2); display: flex; align-items: center; gap: var(--s-2); }
+  .popover ul { padding-left: var(--s-4); display: flex; flex-direction: column; gap: var(--s-1); color: var(--text-2); }
+  .popover p { color: var(--text-2); }
+  .popover p + p { margin-top: var(--s-2); }
+
+  /* ───────── Tooltip (inverse surface in both themes: always distinct from what it labels) ───────── */
+  .tip {
+    position: fixed; z-index: var(--z-tooltip); pointer-events: none;
+    max-width: 280px; padding: 5px var(--s-2);
+    background: var(--tip-bg); color: var(--tip-text);
+    border-radius: var(--r-md); box-shadow: 0 6px 18px rgb(0 0 0 / 0.28);
+    font-size: var(--fs-ui); line-height: 1.35;
+  }
+  .tip__meta { opacity: 0.78; font-size: var(--fs-meta); }
+  .tip kbd { margin-left: 6px; background: rgb(255 255 255 / 0.12); border-color: rgb(255 255 255 / 0.22); color: var(--tip-text); }
+  .tip[hidden] { display: none; }
+  .tip--mono { font-family: var(--font-mono); }
+
+  /* ───────── Form fields ───────── */
+  .field {
+    height: 28px; min-width: 0; padding: 0 var(--s-2);
+    background: var(--surface-1); color: var(--text);
+    border: 1px solid var(--field-border); border-radius: var(--r-md);
+    font-size: var(--fs-ui); font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    transition: border-color var(--t-fast) var(--ease);
+  }
+  .field:hover { border-color: var(--text-2); }
+  .field:focus-visible { outline-offset: 0; border-color: var(--accent-strong); }
+  select.field { font-family: var(--font-ui); cursor: pointer; }
+
+  /* ───────── Swatches (LED and wire colour) ───────── */
+  .swatch {
+    width: 24px; height: 24px; border-radius: 50%; flex: none;
+    border: 2px solid var(--surface-2);
+    background: var(--swatch);
+    box-shadow: 0 0 0 1px var(--border-strong);
+    cursor: pointer;
+    transition: box-shadow var(--t-fast) var(--ease);
+  }
+  .swatch:hover { box-shadow: 0 0 0 1px var(--text-2); }
+  .swatch[aria-checked="true"] { box-shadow: 0 0 0 2px var(--accent-strong); }
+
+  /* ───────── Dialog ───────── */
+  dialog.dialog {
+    margin: auto;
+    width: min(500px, calc(100vw - 32px));
+    background: var(--surface-1); color: var(--text);
+    border-radius: var(--r-lg); box-shadow: var(--shadow-float);
+    overflow: hidden;
+  }
+  dialog.dialog::backdrop { background: var(--backdrop); }
+  .dialog__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); padding: var(--s-3) var(--s-3) var(--s-3) var(--s-4); }
+  .dialog__title { font-size: var(--fs-title); font-weight: 600; display: flex; align-items: center; gap: var(--s-2); }
+  .dialog__body { padding: 0 var(--s-4) var(--s-4); display: flex; flex-direction: column; gap: var(--s-3); font-size: var(--fs-body); color: var(--text-2); }
+  .dialog__foot { display: flex; justify-content: flex-end; gap: var(--s-2); padding: var(--s-3) var(--s-4); background: var(--surface-2); border-top: 1px solid var(--border); }
+  .dialog__row { display: flex; gap: var(--s-2); }
+  .dialog__row .field { flex: 1; height: var(--ctl-h); }
+  .dialog__note { font-size: var(--fs-meta); color: var(--text-3); }
+  .btn--danger { background: var(--stop); border-color: var(--stop); color: var(--stop-ink); font-weight: 600; }
+  .btn--danger:hover:not(:disabled) { background: var(--stop-hover); border-color: var(--stop-hover); }
+  .copy-ok { color: var(--ok); }
+
+  /* ───────── Empty / error states ───────── */
+  .empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s-2);
+    padding: var(--s-5) var(--s-4); text-align: center;
+    color: var(--text-3); font-size: var(--fs-ui);
+  }
+  .empty .icon { width: 22px; height: 22px; color: var(--text-3); }
+  .empty__title { color: var(--text-2); font-weight: 600; font-size: var(--fs-body); }
+  .empty--error .icon, .empty--error .empty__title { color: var(--stop); }
+  .empty p { max-width: 38ch; }
+
+  /* ───────── Separators ───────── */
+  .sep { width: 1px; height: 18px; background: var(--border-strong); flex: none; margin: 0 2px; }
+  .spacer { flex: 1; min-width: 0; }
+
+  /* Touch screens: bigger targets, more room between them */
+  @media (pointer: coarse) {
+    :root { --ctl-h: 40px; --hit: 40px; }
+    .segmented > button { height: 36px; }
+    .swatch { width: 32px; height: 32px; }
+  }
+}

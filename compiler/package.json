@@ -1,0 +1,15 @@
+{
+    "name": "voltloom-compiler",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Voltloom local C compile service (Emscripten)",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "cors": "^2.8.5"
+    }
+}

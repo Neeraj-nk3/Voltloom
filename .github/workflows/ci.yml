@@ -1,0 +1,57 @@
+# Continuous integration for Voltloom.
+#
+# IMPORTANT: this workflow has never been run. The project has no remote yet, and GitHub Actions cannot be executed
+# locally. Each step is a command that was run by hand on Windows with Node 24.12.0 (see docs/testing.md); the job layout,
+# the action versions and the Linux runner are untested. Treat the first real run as the test of this file.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    name: Unit, scenario (Python), examples, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run doctor
+        continue-on-error: true      # optional checks (browser, Emscripten) warn on a bare runner
+      - run: npm run examples:check
+      - run: npm test                # C scenario tests are SKIPPED here (no Emscripten); the "c" job runs them
+      - run: npm run build
+
+  browser:
+    name: Browser tests (Chromium)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium-headless-shell
+      - run: npm run test:e2e        # tests that compile C skip themselves without the compile service's Emscripten
+
+  c:
+    name: C programs (Emscripten)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 6.0.12
+      - run: npm ci
+      - run: npm test                # now includes the C scenario tests and the compile pipeline tests
+      - run: npx playwright install --with-deps chromium-headless-shell
+      - run: npm run test:e2e        # now includes the C browser tests

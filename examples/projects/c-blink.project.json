@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "language": "c",
+  "code": "/**\r\n * blink.c — Test C Program for Voltloom\r\n *\r\n * This is a simple LED blink program that tests:\r\n *   - stdio_init_all() — serial initialization\r\n *   - printf()         — serial output\r\n *   - gpio_init()      — GPIO initialization\r\n *   - gpio_set_dir()   — GPIO direction setting\r\n *   - gpio_put()       — GPIO output\r\n *   - sleep_ms()       — timing (virtual clock)\r\n *\r\n * Expected behavior:\r\n *   - Serial Monitor shows \"LED ON\" / \"LED OFF\" alternating\r\n *   - LED on GP15 blinks with 500ms interval\r\n */\r\n\r\n#include \"pico/stdlib.h\"\r\n#include \"hardware/gpio.h\"\r\n\r\nint main() {\r\n    stdio_init_all();\r\n    printf(\"=== Voltloom — C Blink Test ===\\n\");\r\n\r\n    gpio_init(15);\r\n    gpio_set_dir(15, GPIO_OUT);\r\n\r\n    int count = 0;\r\n    while (1) {\r\n        gpio_put(15, 1);\r\n        printf(\"[%d] LED ON\\n\", count);\r\n        sleep_ms(500);\r\n\r\n        gpio_put(15, 0);\r\n        printf(\"[%d] LED OFF\\n\", count);\r\n        sleep_ms(500);\r\n\r\n        count++;\r\n    }\r\n\r\n    return 0;\r\n}\r\n",
+  "board": "pico_w",
+  "components": [
+    {
+      "id": "res_1",
+      "type": "resistor",
+      "x": 50,
+      "y": 300,
+      "rotation": 0,
+      "value": 330,
+      "unit": 1
+    },
+    {
+      "id": "led_1",
+      "type": "led",
+      "x": 300,
+      "y": 300,
+      "rotation": 0,
+      "color": "#ef4444",
+      "flipped": false
+    }
+  ],
+  "connections": [
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 20
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_1"
+      },
+      "color": "#15803d",
+      "id": "wire_1"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_1"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_2"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_3"
+    }
+  ],
+  "meta": {
+    "app": "voltloom"
+  }
+}

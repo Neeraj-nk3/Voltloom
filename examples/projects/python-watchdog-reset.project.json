@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "language": "python",
+  "code": "from machine import Pin, WDT, reset_cause, WDT_RESET\nfrom time import sleep_ms\n\nled = Pin(15, Pin.OUT)\n\nif reset_cause() == WDT_RESET:\n    print(\"restarted by the watchdog\")\n    led.off()\n    while True:\n        sleep_ms(100)\n\nprint(\"power-on start\")\nled.on()\nwdt = WDT(timeout=1000)\nfor i in range(3):\n    sleep_ms(300)\n    wdt.feed()\n    print(\"fed\", i)\n\nprint(\"no more feeding\")\nwhile True:\n    sleep_ms(100)\n",
+  "board": "pico_w",
+  "components": [
+    {
+      "id": "res_1",
+      "type": "resistor",
+      "x": 50,
+      "y": 300,
+      "rotation": 0,
+      "value": 330,
+      "unit": 1
+    },
+    {
+      "id": "led_1",
+      "type": "led",
+      "x": 300,
+      "y": 300,
+      "rotation": 0,
+      "color": "#ef4444",
+      "flipped": false
+    }
+  ],
+  "connections": [
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 20
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_1"
+      },
+      "color": "#15803d",
+      "id": "wire_1"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_1"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_2"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_3"
+    }
+  ],
+  "meta": {
+    "app": "voltloom"
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "version": 2,
+  "language": "python",
+  "code": "from machine import Pin\nimport time\n\nred = Pin(22, Pin.OUT)      # GP22 -> 220 ohm -> red LED -> GND\nyellow = Pin(19, Pin.OUT)   # GP19 -> 220 ohm -> yellow LED -> GND\ngreen = Pin(16, Pin.OUT)    # GP16 -> 220 ohm -> green LED -> GND\n\ndef show(r, y, g, seconds, name):\n    red.value(r)\n    yellow.value(y)\n    green.value(g)\n    print(\"Light:\", name)\n    time.sleep(seconds)\n\nwhile True:\n    show(1, 0, 0, 2.0, \"red\")\n    show(1, 1, 0, 1.0, \"red + yellow\")\n    show(0, 0, 1, 2.0, \"green\")\n    show(0, 1, 0, 1.0, \"yellow\")\n",
+  "board": "pico_w",
+  "components": [
+    {
+      "id": "res_1",
+      "type": "resistor",
+      "x": 470,
+      "y": 600,
+      "rotation": 0,
+      "value": 220,
+      "unit": 1
+    },
+    {
+      "id": "led_1",
+      "type": "led",
+      "x": 775,
+      "y": 490,
+      "rotation": 90,
+      "color": "#ef4444",
+      "flipped": false
+    },
+    {
+      "id": "res_2",
+      "type": "resistor",
+      "x": 470,
+      "y": 800,
+      "rotation": 0,
+      "value": 220,
+      "unit": 1
+    },
+    {
+      "id": "led_2",
+      "type": "led",
+      "x": 775,
+      "y": 690,
+      "rotation": 90,
+      "color": "#facc15",
+      "flipped": false
+    },
+    {
+      "id": "res_3",
+      "type": "resistor",
+      "x": 470,
+      "y": 1000,
+      "rotation": 0,
+      "value": 220,
+      "unit": 1
+    },
+    {
+      "id": "led_3",
+      "type": "led",
+      "x": 775,
+      "y": 890,
+      "rotation": 90,
+      "color": "#22c55e",
+      "flipped": false
+    }
+  ],
+  "connections": [
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 29
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_1"
+      },
+      "color": "#ef4444",
+      "id": "wire_1"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_1"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_1"
+      },
+      "color": "#ef4444",
+      "id": "wire_2"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_1"
+      },
+      "end": {
+        "nodeType": "gpio",
+        "pin": 33
+      },
+      "color": "#1f2937",
+      "id": "wire_3"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 25
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_2"
+      },
+      "color": "#f59e0b",
+      "id": "wire_4"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_2"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_2"
+      },
+      "color": "#f59e0b",
+      "id": "wire_5"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_2"
+      },
+      "end": {
+        "nodeType": "gpio",
+        "pin": 28
+      },
+      "color": "#1f2937",
+      "id": "wire_6"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 21
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_3"
+      },
+      "color": "#22c55e",
+      "id": "wire_7"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_3"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_3"
+      },
+      "color": "#22c55e",
+      "id": "wire_8"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_3"
+      },
+      "end": {
+        "nodeType": "gpio",
+        "pin": 23
+      },
+      "color": "#1f2937",
+      "id": "wire_9"
+    }
+  ],
+  "meta": {
+    "app": "voltloom"
+  }
+}

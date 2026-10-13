@@ -1,0 +1,6 @@
+# Headers for static hosts that read a _headers file (Netlify, Cloudflare Pages).
+# They make the page cross-origin isolated, which the app needs for C programs, live button input, interrupts and the
+# debugger. See docs/deployment.md for other hosts and for what happens without them.
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: credentialless

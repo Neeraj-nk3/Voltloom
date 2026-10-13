@@ -1,0 +1,144 @@
+{
+ "diagram": "{\n  \"version\": 1,\n  \"author\": \"Anonymous\",\n  \"editor\": \"Voltloom\",\n  \"parts\": [\n    {\n      \"type\": \"raspberry-pi-pico\",\n      \"id\": \"pico\",\n      \"top\": 0,\n      \"left\": 0,\n      \"attrs\": {\n        \"env\": \"micropython-20251210-v1.27.0\"\n      },\n      \"connections\": [\n        \"GP15:res1:1\",\n        \"GND.1:led1:C\",\n        \"GP0:btn1:1\"\n      ]\n    },\n    {\n      \"type\": \"led\",\n      \"id\": \"led1\",\n      \"top\": 300,\n      \"left\": 100,\n      \"attrs\": {\n        \"color\": \"red\"\n      },\n      \"connections\": [\n        \"A:res1:2\",\n        \"C:pico:GND.1\"\n      ]\n    },\n    {\n      \"type\": \"resistor\",\n      \"id\": \"res1\",\n      \"top\": 300,\n      \"left\": 400,\n      \"attrs\": {\n        \"value\": \"4.7\"\n      },\n      \"connections\": [\n        \"1:pico:GP15\",\n        \"2:led1:A\"\n      ]\n    },\n    {\n      \"type\": \"push-button\",\n      \"id\": \"btn1\",\n      \"top\": 600,\n      \"left\": 100,\n      \"attrs\": {},\n      \"connections\": [\n        \"1:pico:GP0\"\n      ]\n    }\n  ],\n  \"dependencies\": {}\n}",
+ "wirePaths": [
+  "M 5 6 L -22 6 L -22 -20 L 510 -20 L 510 210",
+  "M 510 430 L 510 520 L 180 520 L 180 455",
+  "M 7 8 L 80 8 L 80 540 L 135 540 L 135 450",
+  "M 9 10 L -22 10 L -22 650 L 111 650"
+ ],
+ "popups": {
+  "led": {
+   "popup": true,
+   "resistorControls": false,
+   "ledControls": true,
+   "flip": true,
+   "value": "1",
+   "unit": "1"
+  },
+  "resistor": {
+   "popup": true,
+   "resistorControls": true,
+   "ledControls": false,
+   "flip": false,
+   "value": "4.7",
+   "unit": "1000"
+  },
+  "button": {
+   "popup": true,
+   "resistorControls": false,
+   "ledControls": false,
+   "flip": false,
+   "value": "4.7",
+   "unit": "1000"
+  }
+ },
+ "validity": {
+  "LED anode -> GND.1": {
+   "created": 0,
+   "invalidMessagesSoFar": 1
+  },
+  "LED anode -> 3V3(OUT)": {
+   "created": 1,
+   "invalidMessagesSoFar": 1
+  },
+  "LED cathode -> VBUS": {
+   "created": 0,
+   "invalidMessagesSoFar": 2
+  },
+  "LED cathode -> GND.2": {
+   "created": 1,
+   "invalidMessagesSoFar": 2
+  },
+  "LED anode -> GP15": {
+   "created": 1,
+   "invalidMessagesSoFar": 2
+  },
+  "resistor 1 -> GND.3": {
+   "created": 1,
+   "invalidMessagesSoFar": 2
+  },
+  "resistor 2 -> VBUS": {
+   "created": 1,
+   "invalidMessagesSoFar": 2
+  },
+  "button 1 -> GND.4": {
+   "created": 1,
+   "invalidMessagesSoFar": 2
+  }
+ },
+ "warnings": [
+  "[Warning] Warning: Floating LED cathode detected. Consider wiring it to GND.",
+  "[Warning] Warning: Resistor 1 has a floating pin. Resistors must be connected in-line with a circuit.",
+  "[Warning] Warning: Button 1 is only connected on one side. It will not form a complete circuit.",
+  "[Warning] Warning: Floating LED anode detected. Consider wiring it to a GPIO or VBUS."
+ ],
+ "inspector": [
+  "State inspector",
+  "GPIO PINS",
+  "No initialized pins",
+  "EXECUTION",
+  "Status",
+  "RUNNING",
+  "PARTS",
+  "LED",
+  "Blue",
+  "Resistor",
+  "4.7kΩ",
+  "Button",
+  "released",
+  "LED",
+  "Blue"
+ ],
+ "palette": [
+  {
+   "prefix": "led",
+   "label": "LED 1",
+   "left": "464px",
+   "top": "425px"
+  },
+  {
+   "prefix": "led",
+   "label": "LED 2",
+   "left": "464px",
+   "top": "201px"
+  },
+  {
+   "prefix": "res",
+   "label": "1 kΩ",
+   "left": "708px",
+   "top": "505px"
+  },
+  {
+   "prefix": "btn",
+   "label": "Button 1",
+   "left": "688px",
+   "top": "306px"
+  },
+  {
+   "prefix": "btn",
+   "label": "Button 2",
+   "left": "688px",
+   "top": "614px"
+  }
+ ],
+ "resistorEdit": {
+  "label": "220 Ω",
+  "bands": [
+   "#FF0000",
+   "#FF0000",
+   "#8B5B29",
+   "#D4AF37"
+  ]
+ },
+ "rotate": "rotate(90deg) scaleX(1)",
+ "ledEdit": {
+  "transform": "rotate(0deg) scaleX(-1)",
+  "stops": [
+   "#4ade80",
+   "#15803d",
+   "#15803d"
+  ],
+  "label": "rgb(74, 222, 128)"
+ },
+ "deleteRemoved": 1
+}

@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "language": "c",
+  "code": "#include <stdio.h>\n#include \"pico/stdlib.h\"\n#include \"hardware/gpio.h\"\n#include \"hardware/pwm.h\"\n\n#define LED_PIN 15\n\nint main() {\n    stdio_init_all();\n\n    gpio_set_function(LED_PIN, GPIO_FUNC_PWM);\n    uint slice = pwm_gpio_to_slice_num(LED_PIN);\n    pwm_set_wrap(slice, 999);\n    pwm_set_enabled(slice, true);\n\n    for (int step = 0; step <= 8; step++) {\n        uint level = step * 125;\n        if (level > 999) level = 999;      // the counter wraps at 999, so 999 is the highest useful level\n        pwm_set_gpio_level(LED_PIN, level);\n        printf(\"level %u\\n\", level);\n        sleep_ms(250);\n    }\n\n    printf(\"done\\n\");\n    return 0;\n}\n",
+  "board": "pico_w",
+  "components": [
+    {
+      "id": "res_1",
+      "type": "resistor",
+      "x": 50,
+      "y": 300,
+      "rotation": 0,
+      "value": 330,
+      "unit": 1
+    },
+    {
+      "id": "led_1",
+      "type": "led",
+      "x": 300,
+      "y": 300,
+      "rotation": 0,
+      "color": "#ef4444",
+      "flipped": false
+    }
+  ],
+  "connections": [
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 20
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "1",
+        "componentId": "res_1"
+      },
+      "color": "#15803d",
+      "id": "wire_1"
+    },
+    {
+      "start": {
+        "nodeType": "component_pin",
+        "pin": "2",
+        "componentId": "res_1"
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "A",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_2"
+    },
+    {
+      "start": {
+        "nodeType": "gpio",
+        "pin": 3
+      },
+      "end": {
+        "nodeType": "component_pin",
+        "pin": "C",
+        "componentId": "led_1"
+      },
+      "color": "#15803d",
+      "id": "wire_3"
+    }
+  ],
+  "meta": {
+    "app": "voltloom"
+  }
+}

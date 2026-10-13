@@ -1,0 +1,151 @@
+/* Page structure: title bar, the code pane, the workbench pane, splitters, responsive behaviour.
+   Every header row is --row-h tall and every footer row --foot-h, so their lines run straight across both panes. */
+@layer layout {
+
+  .app { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+
+  /* ───────── Title bar ───────── */
+  .titlebar {
+    flex: none;
+    display: flex; flex-wrap: wrap; align-items: center;
+    column-gap: var(--s-3); row-gap: var(--s-1);
+    min-height: var(--titlebar-h);
+    padding: 6px var(--s-3);
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: var(--s-2); flex: none; padding-right: var(--s-1); }
+  .brand__mark { width: 22px; height: 22px; color: var(--accent); }
+  .brand__name { font-size: 15px; font-weight: 600; letter-spacing: 0.005em; }
+
+  .pane-switch { display: none; }
+
+  .transport { display: flex; align-items: center; gap: var(--s-2); }
+  /* Run and Stop are one control with two halves: the pair never changes width */
+  .transport__pair { display: inline-flex; }
+  .transport__pair > .btn { min-width: 76px; }
+  .transport__pair > .btn:first-child { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+  .transport__pair > .btn:last-child { border-top-left-radius: 0; border-bottom-left-radius: 0; margin-left: -1px; }
+  .transport__debug { display: inline-flex; gap: 2px; }
+
+  .run-status {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    height: 26px; padding: 0 10px 0 8px; min-width: 150px; max-width: 280px;
+    border-radius: 13px; background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--text-2); font-size: var(--fs-ui); white-space: nowrap;
+  }
+  .run-status__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); flex: none; }
+  .run-status[data-state="running"] { color: var(--text); }
+  .run-status[data-state="running"] .run-status__dot { background: var(--run); box-shadow: 0 0 0 3px var(--ok-soft); }
+  .run-status[data-state="starting"] .run-status__dot { background: var(--info); }
+  .run-status[data-state="paused"] { color: var(--text); }
+  .run-status[data-state="paused"] .run-status__dot { background: var(--warn); box-shadow: 0 0 0 3px var(--warn-soft); }
+  .run-status[data-state="error"] { color: var(--stop); }
+  .run-status[data-state="error"] .run-status__dot { background: var(--stop); }
+  .run-status__text { overflow: hidden; text-overflow: ellipsis; }
+
+  .titlebar__end { display: flex; align-items: center; gap: var(--s-1); margin-left: auto; min-width: 0; }
+  .titlebar__end .sep { margin: 0 var(--s-1); }
+  .save-status { font-size: var(--fs-meta); color: var(--text-3); white-space: nowrap; margin-right: var(--s-2); }
+  .save-status[data-state="unsaved"], .save-status[data-state="saving"] { color: var(--warn); }
+  .save-status[data-state="failed"], .save-status[data-state="unavailable"] { color: var(--stop); }
+  #isolation-status { margin-right: var(--s-1); }
+
+  .menu-anchor { position: relative; }
+  .menu-anchor > .menu { top: calc(100% + 6px); left: 0; }
+  .menu-anchor > .menu--end { left: auto; right: 0; min-width: 200px; }
+
+  /* ───────── Workspace ───────── */
+  .workspace { flex: 1; min-height: 0; display: flex; }
+
+  .pane { min-width: 0; min-height: 0; display: flex; flex-direction: column; }
+  .pane-code { flex: 0 0 var(--code-w); min-width: 300px; background: var(--editor); }
+  .pane-bench { flex: 1 1 0; min-width: 360px; background: var(--surface-1); container: bench / inline-size; }
+
+  .splitter { flex: none; position: relative; z-index: 5; background: var(--border); touch-action: none; }
+  .splitter::after { content: ""; position: absolute; inset: 0; }            /* wider, invisible grab area */
+  .splitter--v { width: 1px; cursor: col-resize; }
+  .splitter--v::after { inset: 0 -4px; }
+  .splitter--h { height: 1px; cursor: row-resize; }
+  .splitter--h::after { inset: -4px 0; }
+  .splitter:hover, .splitter.is-dragging { background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .splitter:focus-visible { background: var(--accent-strong); outline: none; box-shadow: 0 0 0 2px var(--accent-strong); }
+  body.is-resizing { user-select: none; }
+  body.is-resizing * { cursor: inherit !important; }
+
+  /* ───────── Code pane ───────── */
+  .editor-wrap { flex: 1; min-height: 0; position: relative; background: var(--editor); }
+  #editor-container { position: absolute; inset: 0; }
+  .editor-state { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; background: var(--editor); }
+  .editor-state[hidden] { display: none; }
+
+  /* Monaco decorations: breakpoint dot in the gutter, and the line the program is paused on */
+  .breakpoint-glyph { background: var(--stop); border-radius: 50%; width: 10px !important; height: 10px !important; margin-left: 5px; margin-top: 6px; }
+  .paused-line { background: var(--warn-soft); }
+  .paused-glyph { background: var(--warn); width: 10px !important; height: 12px !important; margin-left: 5px; margin-top: 5px; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+  .statusbar {
+    flex: none; display: flex; align-items: center; gap: var(--s-4);
+    height: var(--foot-h); padding: 0 var(--s-3);
+    background: var(--surface-1); border-top: 1px solid var(--border);
+    font-size: var(--fs-meta); color: var(--text-2); font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden;
+  }
+  .statusbar__note { font-family: var(--font-ui); color: var(--text-3); overflow: hidden; text-overflow: ellipsis; }
+
+  /* ───────── Workbench ───────── */
+  .toolbar {
+    flex: none; position: relative; z-index: var(--z-panel);
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-1);
+    min-height: var(--row-h); padding: 4px var(--s-2);
+    background: var(--surface-1); border-bottom: 1px solid var(--border);
+  }
+  .toolbar__group { display: flex; align-items: center; gap: 2px; }
+
+  .zoom-readout { min-width: 52px; padding: 0 var(--s-1); font-family: var(--font-mono); font-size: var(--fs-meta); font-variant-numeric: tabular-nums; }
+
+  .bench-body { flex: 1; min-height: 0; display: flex; position: relative; }
+  .bench-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+  @container bench (max-width: 700px) {
+    /* too narrow to dock: the inspector slides over the canvas and sits above anything floating on it */
+    .inspector { position: absolute; right: 0; top: 0; bottom: 0; z-index: calc(var(--z-menu) - 1); box-shadow: -12px 0 24px rgb(0 0 0 / 0.25); }
+  }
+  @container bench (max-width: 560px) {
+    .toolbar .btn--collapsible .btn__label { display: none; }
+    .toolbar .btn--collapsible { padding: 0; width: var(--hit); }
+    .toolbar .btn--collapsible .btn__caret { display: none; }
+  }
+
+  /* ───────── Narrower windows (also what a browser zoom of 150% or more looks like) ───────── */
+  @media (max-width: 1280px) {
+    .titlebar .btn--collapsible .btn__label { display: none; }
+    .titlebar .btn--collapsible { padding: 0; width: var(--hit); }
+    .run-status { min-width: 0; max-width: 220px; }
+  }
+
+  @media (max-width: 900px) {
+    .pane-switch { display: inline-flex; }
+    .titlebar { row-gap: var(--s-2); }
+    .transport { order: 5; flex: 1 1 100%; }
+    .run-status { max-width: none; flex: 0 1 auto; }
+
+    /* One pane at a time. The other stays laid out but invisible (not display:none), so the editor and the canvas keep
+       their size, state and measurements while hidden and switching back is instant. */
+    .splitter--v { display: none; }
+    .workspace { position: relative; }
+    .workspace > .pane { position: absolute; inset: 0; width: auto; min-width: 0; }
+    .app[data-pane="code"] .pane-bench { visibility: hidden; pointer-events: none; }
+    .app[data-pane="circuit"] .pane-code { visibility: hidden; pointer-events: none; }
+  }
+
+  @media (max-width: 560px) {
+    .save-status { display: none; }
+    .brand__name { display: none; }
+    .run-status { min-width: 0; }
+  }
+
+  @media (max-height: 520px) {
+    :root { --console-h: 140px; }
+  }
+}
