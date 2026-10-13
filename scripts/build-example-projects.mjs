@@ -57,7 +57,8 @@ export function loadManifest() {
 }
 
 export function buildProject(example) {
-  const code = fs.readFileSync(path.join(root, 'examples', example.file), 'utf8');
+  // LF always: a Windows checkout (core.autocrlf) has CRLF files, and the projects must not depend on the checkout
+  const code = fs.readFileSync(path.join(root, 'examples', example.file), 'utf8').replace(/\r\n/g, '\n');
   const circuit = CIRCUITS[example.circuit];
   if (!circuit) throw new Error(`example ${example.id}: unknown circuit "${example.circuit}"`);
   return createProject(code, example.language, circuit.components, circuit.connections, 'pico_w');
